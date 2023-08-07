@@ -31,25 +31,24 @@ class UserController extends Controller
     {
         $user = User::where("email", $request->email)->first();
 
-        if (isset($user->id)) {
-            if (Hash::check($request->password, $user->password)) {
-                $token = $user->createToken("auth_token")->plainTextToken;
-
-                return response()->json([
-                    "msg" => "Usuario Logueado exitosamente",
-                    "access_token" => $token,
-                ]);
-
-            }else{
-                return response()->json([
-                    "error" => "La password es incorrecta"
-                ]);
-            }
-        }else{
+        // Si el usuario no se encontró
+        // o si el password no corresponde
+        // retornamos error.
+        // IMPORTANTE: 
+        //   Es un error de seguridad devolver un mensaje diferente 
+        //   si no se encuetra el usuario o la contraseña.
+        if (!$user || ($user && !Hash::check($request->password, $user->password))) {
             return response()->json([
-                "error" => "Usuario no registrado"
-            ],404);
+                "error" => "Credenciales incorrectas."
+            ], 401);
         }
+        
+        $token = $user->createToken("auth_token")->plainTextToken;
+
+        return response()->json([
+            "msg" => "Usuario Logueado exitosamente",
+            "access_token" => $token,
+        ], 200);
     }
 
    
