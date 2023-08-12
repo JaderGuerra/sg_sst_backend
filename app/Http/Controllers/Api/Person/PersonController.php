@@ -15,7 +15,21 @@ class PersonController extends Controller
      */
     public function index()
     {
-        $persons = Person::paginate();
+        $query = Person::query();
+
+        if( $name = request('filter.name') ) {
+            $query->where("name", "LIKE", "%$name%");
+        }
+
+        if( $email = request('filter.email') ) {
+            $query->orWhere("email", "LIKE", "%$email%");
+        }
+
+        if( $identification = request('filter.identification') ) {
+            $query->orWhere("identification", "LIKE", "%$identification%");
+        }
+
+        $persons = $query->paginate(20);
         return $persons;
     }
 

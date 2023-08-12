@@ -13,10 +13,10 @@ Route::group(['middleware' => ["auth:sanctum"]], function () {
     Route::get('logout', [UserController::class, 'logout']);
 
     // Person
-    Route::apiResource('person', PersonController::class)
-        ->missing(fn () => response()->json([
-            'data' => null,
-            'error' => 'Not Found.'
-        ], 404));
 });
+Route::apiResource('person', PersonController::class)
+    ->missing(fn () => response()->json([
+        'data' => null,
+        'error' => 'Not Found.'
+    ], 404));
 Route::apiResource('teacher', TeacherController::class);
